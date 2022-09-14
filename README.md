@@ -24,3 +24,5 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+<img src="http://cloud.novara.com.py/index.php/s/trz2T4UswiwznGO/m1.png" width="15%"></img> 
+

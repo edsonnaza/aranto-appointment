@@ -4,6 +4,7 @@ import Medicos from '@/views/Medicos.vue'
 import Calendario from '@/components/Calendario.vue'
 import Home from '@/views/HomeView.vue'
 import Servicios from '@/views/Servicios.vue'
+import Agendas from '@/views/Agendas.vue'
 
 
 Vue.use(VueRouter)
@@ -30,6 +31,11 @@ const routes = [
   path: '/servicios',
   name: 'servicios',
   component: Servicios
+},
+  {
+  path: '/agendas',
+  name: 'agendas',
+  component: Agendas
 }
 ]
 

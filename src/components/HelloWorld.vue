@@ -76,6 +76,10 @@
         {
           text: 'Servicios',
           href: '/servicios',
+        },
+        {
+          text: 'Agendas',
+          href: '/Agendas',
         }
       ]
     

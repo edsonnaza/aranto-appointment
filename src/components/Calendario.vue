@@ -297,7 +297,7 @@ items: [],
                            
               this.itemsServicios.push({name:x.name, id:x.id, precio:x.precio});
             });
-              console.log(this.itemsServicios);
+              //console.log(this.itemsServicios);
 
            // datos.forEach( (i) => this.items.push( () => i  ) )
 
@@ -327,7 +327,7 @@ items: [],
 
            // datos.forEach( (i) => this.items.push( () => i  ) )
 
-            console.log(this.items);
+          //  console.log(this.items);
             
         } catch (error) {
             console.log(error);
@@ -356,7 +356,7 @@ items: [],
             //console.log(this.currentlyEditing);
             //this.selectedMedico=this.events[id].medico;
                this.events.forEach((x) => {
-                   console.log(this.currentlyEditing);
+                  // console.log(this.currentlyEditing);
                     if(x.id===this.currentlyEditing){
                           // Selecciona el médico correspondiente.
                           this.selectedMedico=x.medico;

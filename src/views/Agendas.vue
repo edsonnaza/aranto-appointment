@@ -1,10 +1,18 @@
 
 <template>
 <div>
-  
+   
 <v-container>
-     
-                      
+      <v-select
+      v-model="SelectedMedico"
+      :items="medicos"
+       item-text="name"
+      item-value="name"    
+      label="Médicos"
+     @change=getEvents(SelectedMedico)   
+      clearable
+    ></v-select>
+                    
   <v-data-table
     :headers="headers"
     :items="eventos"
@@ -20,7 +28,7 @@
         flat
       >
         <v-toolbar-title >Agenda de Profesionales</v-toolbar-title>
-         
+             
         <v-divider
           class="mx-4"
           inset
@@ -50,17 +58,42 @@
             <v-card-text>
               <v-container>
                 <v-form>
-                  <v-col
-                   
-                  >
-                    <v-text-field
-                      v-model="editedItem.medicos"
-                      label="Servicio"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
+                  <v-col >            
                   
-                  >
+                 <v-select
+                      v-model="selectedServicio"
+                      :items="itemsServicios"
+                      item-text="name"
+                      item-value="id"
+                      label="Servicios"
+                      return-object
+                      required 
+                      @change=getPrecio(selectedServicio.precio)             
+                      > 
+                          
+                      </v-select>
+                  <v-text><p v-if="precio>0">Precio: {{precio}}</p></v-text>
+                  </v-col>
+                  <v-col  >
+                    <v-text-field 
+                        type="date" label="Inico del Evento" v-model="editedItem.start">
+                    </v-text-field>
+                  </v-col>
+                  <v-col >
+                     <v-text-field 
+                        type="date" label="Fin del Evento" v-model="editedItem.end">
+                    </v-text-field>
+                    </v-col>
+                  <v-col>
+                      <v-select
+                      v-model="SelectedMedico"
+                      :items="medicos"
+                      item-text="name"
+                      item-value="name"    
+                      label="Médicos"
+                    
+                      clearable
+                    ></v-select>
                   </v-col>
                             
                
@@ -115,6 +148,7 @@
         mdi-delete
       </v-icon>
     </template>
+
     <template v-slot:no-data>
         
       <v-btn
@@ -126,8 +160,9 @@
 
     </template>
 
+
   </v-data-table>
-          
+        
 </v-container>
 
 </div>
@@ -141,20 +176,27 @@ import {db} from '../main';
       dialogDelete: false,
       headers: [
         {
+            text:'Id', value:'id'
+        },
+        {
           text: 'Nombres',
           align: 'start',
-          sortable: false,
+          sortable: true,
           value: 'medico',
         },
         { text: 'Agenda', value: 'start' },
        // { text: 'Especialidad', value: 'especialidad' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
+      datos:[],
+      xname:null,
       SelectedMedico:null,
+      selectedServicio:null,
       editedIndex: -1,
       editedItem: {
         name: null,
-        precio: null
+        start: null,
+        end: null
        
          
       },
@@ -163,8 +205,9 @@ import {db} from '../main';
         precio: 0
         
       },
+         itemsServicios:[],
         eventos:[],
-        items:[],
+        medicos:[],
  /*select: null,
       items: [
         'Clínico Familiar',
@@ -178,9 +221,8 @@ import {db} from '../main';
       formTitle () {
         return this.editedIndex === -1 ? 'Nuevo Servicio' : 'Editar Servicio'
       },
-
-        
-
+     
+    
         
     },
 
@@ -194,15 +236,18 @@ import {db} from '../main';
     },
 
     created () {
-      this.getEvents();
+     // this.getEvents(this.xname);
       this.getMedicos();
-    },
+this.getServicios();
+    },  
 
     methods: {
-      
-    async  getMedicos(){
+            getPrecio(x){
+       this.precio=x;
+      },
+      async  getServicios(){
        try {
-            const snapshot = await db.collection('medicos').get();
+            const snapshot = await db.collection('servicios').get();
             const datos = [];
             
             snapshot.forEach(doc =>{
@@ -215,7 +260,64 @@ import {db} from '../main';
 
            datos.forEach((x) => {
                            
-              this.items.push(x.name);
+              this.itemsServicios.push({name:x.name, id:x.id, precio:x.precio});
+            });
+              //console.log(this.itemsServicios);
+
+           // datos.forEach( (i) => this.items.push( () => i  ) )
+
+            console.log(this.itemsServicios);
+            
+        } catch (error) {
+            console.log(error);
+        }        
+      },
+          async  buscarMedico(name){
+          this.datos=[];
+         //  alert(name);
+          var xname=name;
+         // var cnt=0;
+       
+
+        try {
+          this.eventos.forEach(object =>{
+        if(object.medico === xname){
+           // cnt++;
+            this.datos.push(object);
+      
+        }   
+      });
+        } catch (error) {
+          console.log(error);
+        }
+
+
+       
+        console.log(this.datos);
+        this.medicos=this.datos;
+        // this.medicos.push({id:x.id, name:x.name});  
+        // alert(datos);
+          //console.log(this.datos);
+             
+        },
+
+    async  getMedicos(){
+       try {
+            const snapshot = await db.collection('medicos').get();
+            const datos = [];
+            
+            snapshot.forEach(doc =>{
+                console.log(doc.data());
+                let eventoData = doc.data();
+                eventoData.id=doc.id;
+
+                datos.push(eventoData);
+            })
+            //this.items = events;
+
+           datos.forEach((x) => {
+                     this.medicos.push({id:x.id, name:x.name});  
+                      
             });
 
            // datos.forEach( (i) => this.items.push( () => i  ) )
@@ -226,7 +328,7 @@ import {db} from '../main';
             console.log(error);
         }        
       },
-      async  getEvents(){
+      async  getEvents(xname){
            
         try {
             const snapshot = await db.collection('eventos').get();
@@ -239,8 +341,13 @@ import {db} from '../main';
                 events.push(eventoData);
             })
                 
-           
-            this.eventos = events;
+           this.eventos=[];
+           events.forEach((x) => {
+                  if(x.medico===xname){  this.eventos.push({id:x.id, name:x.name,medico:x.medico,start:x.start});  }  
+                  
+                      
+            });
+          //  this.eventos = events;
         } catch (error) {
             console.log(error);
         }        

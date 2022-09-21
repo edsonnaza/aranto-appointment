@@ -65,7 +65,7 @@
         ></v-calendar>
 
         <!-- Agregar Modal Agregar Evento -->
-        <v-dialog v-model="dialog" max-width="500">
+        <v-dialog v-model="dialog" max-width="600">
             <v-card>
                 <v-container>
                    <v-form @submit.prevent="addEvent">
@@ -75,7 +75,11 @@
                      <v-select
                       v-model="selectedMedico"
                       :items="items"
+                      item-value="id"
+                      item-text="name"
                       label="Medicos"
+                      @change=checkId(selectedMedico.id)
+                      return-object
                       required              
                       ></v-select>
                       <v-select
@@ -90,7 +94,7 @@
                       > 
                           
                       </v-select>
-                  <v-text><p v-if="precio>0">Precio: {{precio}}</p></v-text>
+                  <p v-if="precio>0">Precio: {{precio}}</p>
                     <v-text-field 
                         type="text" label="Agregar Detalle" v-model="details">
                     </v-text-field>
@@ -100,6 +104,29 @@
                      <v-text-field 
                         type="date" label="Fin del Evento" v-model="end">
                     </v-text-field>
+
+                      <div>
+                      <h5>Plan your event:</h5>
+                      <v-row
+                        justify="space-around"
+                        align="center"
+                      >
+                        <v-col style="width: 200px; flex: 0 1 auto;" class="mr-3">
+                          <h4>Start:</h4>
+                          <v-time-picker
+                            v-model="starttime"
+                            :max="endtime"
+                          ></v-time-picker>
+                        </v-col>
+                        <v-col style="width: 200px; flex: 0 1 auto;">
+                          <h4>End:</h4>
+                          <v-time-picker
+                            v-model="endtime"
+                            :min="starttime"
+                          ></v-time-picker>
+                        </v-col>
+                      </v-row>
+                    </div>
                      <v-text-field 
                         type="color" label="Color del Evento" v-model="color">
                     </v-text-field>
@@ -150,6 +177,8 @@
                               <v-select
                               v-model="selectedMedico"
                               :items="items"
+                              item-value="id"
+                              item-text="name"
                               label="Medicos"
                               required              
                               ></v-select>
@@ -214,6 +243,8 @@ import {db} from '../main';
       },
       start: null,
       end: null,
+      starttime:null,
+      endtime:null,
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
@@ -227,6 +258,8 @@ import {db} from '../main';
       details: null,
       color: '#1976D2',
       dialog: false, 
+      idagenda:null,
+      idmedico:null,
       currentlyEditing: null,
       selectMedicos:[],
       itemsServicios:[],
@@ -280,6 +313,9 @@ items: [],
       getPrecio(x){
        this.precio=x;
       },
+      checkId(id){
+          console.log(id);
+        },
       async  getServicios(){
        try {
             const snapshot = await db.collection('servicios').get();
@@ -301,7 +337,7 @@ items: [],
 
            // datos.forEach( (i) => this.items.push( () => i  ) )
 
-            console.log(this.itemsServicios);
+           // console.log(this.itemsServicios);
             
         } catch (error) {
             console.log(error);
@@ -322,7 +358,7 @@ items: [],
 
            datos.forEach((x) => {
                            
-              this.items.push(x.name);
+              this.items.push({name:x.name,id:x.id });
             });
 
            // datos.forEach( (i) => this.items.push( () => i  ) )
@@ -340,7 +376,8 @@ items: [],
                         details: ev.details,
                         name: ev.name,
                         servicio:this.selectedServicio,
-                        medico: this.selectedMedico,
+                        medico: this.selectedMedico.name,
+                        idmedico:this.selectedMedico.id,
                         precio: this.selectedEvent.precio
                         
                     })  
@@ -387,10 +424,16 @@ items: [],
                     name: this.name,
                     details: this.details,
                     start: this.start,
+                    end:this.end,
+                    starttime: this.starttime,
+                    endtime:this.endtime,
                     color: this.color,
+                    //idmedico:this.selectedMedico.id,
+                    idgenda:this.idagenda,
                     medico: this.selectedMedico,
                     servicio: this.selectedServicio,
-                    precio:this.precio
+                   // precio:this.precio
+                    
                 })
                     this.getEvents();
                     this.name=null;

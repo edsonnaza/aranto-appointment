@@ -182,6 +182,7 @@
                               label="Medicos"
                               required              
                               ></v-select>
+
                               <v-select
                               v-model="selectedServicio"
                               :items="itemsServicios"

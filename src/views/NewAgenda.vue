@@ -1,9 +1,11 @@
 <template>
-<v-container class="">       
+<v-container class="center">       
  <h1 class="mt-3">Crear Nueva Agenda</h1>
-    
+  <v-spacer></v-spacer>  
   <form>
     <v-row>
+    <v-col  cols="12"
+      sm="6">
     <v-text-field
       v-model="name"
       :error-messages="nameErrors"
@@ -13,8 +15,13 @@
       @input="$v.name.$touch()"
       @blur="$v.name.$touch()"
     ></v-text-field>
+ </v-col>
    </v-row>
+
  <v-row>
+    <v-col  cols="12"
+       
+      sm="6">
     <v-select
       v-model="selectMedico"
       :items="itemsMedicos"
@@ -27,97 +34,23 @@
       @change="$v.selectMedico.$touch()"
       @blur="$v.selectMedico.$touch()"
     ></v-select>
+</v-col>
 </v-row>
-    <v-card>
-        <h3>Agenda:</h3>
-        <v-card flat v-for="item,index in slots" :key="index">
-          <v-card-text v-for="int,key in item.intervals" :key="key"> 
-                        <h4 v-if="key==0">Fecha:{{dateFormat(int.xdate)}}</h4>
-                     {{key+1}} - Hora:{{int.start }} -Status: {{int.status}}
-          </v-card-text>
-        </v-card>
-    </v-card>
 
-    
-    <v-row>
+<v-row>
     <v-col
       cols="12"
       sm="6"
     >
-
       <v-date-picker
         v-model="dates"
         multiple
       ></v-date-picker>
     </v-col>
-
-<v-col cols="12" sm="6">
-      
-    <v-card>
-    <v-toolbar
-      color="deep-purple accent-4"
-      dark
-      flat
-    >
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Vista Previa de la Agenda</v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-dots-vertical</v-icon>
-      </v-btn>
-
-      <template v-slot:extension>
-        <v-tabs
-          v-model="currentItem"
-          fixed-tabs
-          slider-color="white"
-        >
-          <v-tab
-            v-for="item,index in slots" :key="index"
-            
-            :href="'#tab-' + item"
-          >
-            <p v-for="int,key in item.intervals" :key="key"> 
-                        <span v-if="key==0">{{dateFormat(int.xdate)}}</span>
-                     
-          </p>
-          </v-tab>
-
-          
-        </v-tabs>
-      </template>
-    </v-toolbar>
-
-    <v-tabs-items v-model="currentItem">
-      <v-tab-item
-        v-for="item in slots"
-        :key="item.intervals.xdate"
-        :value="'tab-' + item"
-      >
-        <v-card flat>
-          <v-card-text v-for="int, key in item.intervals" :key="key">
-            <h2 v-if="key==0">{{dateFormat(int.xdate)}}</h2>
-            {{key+1}} - Hora:{{int.start }} -Status: {{int.status}}
-          </v-card-text>
-        </v-card>
-      </v-tab-item>
-    </v-tabs-items>
-  </v-card>
-   
-   
-</v-col>
     <v-col
       cols="12"
       sm="6"
     >
-
       <v-menu
         ref="menu"
         v-model="menu"
@@ -146,7 +79,7 @@
           no-title
           scrollable
         >
-          <v-spacer></v-spacer>
+          
           <v-btn
             text
             color="primary"
@@ -163,17 +96,60 @@
           </v-btn>
         </v-date-picker>
       </v-menu>
+<v-row 
+      justify="space-around"
+      align="center"
+    >
+      <v-col cols="12" lg="12"  sm="6" style="width: 250px; flex: 0 1 auto;">
+        <h4>Inicio:</h4>
+        <v-time-picker 
+          v-model="start"
+          :max="end"
+             format="24hr"
+            
+        ></v-time-picker>
+      </v-col>
+      <v-col cols="12" lg="12" sm="6" style="width: 250px; flex: 0 1 auto;">
+        <h4>Final:</h4>
+        <v-time-picker
+          v-model="end"
+          :min="start"
+             format="24hr"
+        ></v-time-picker>
+      </v-col>
+    </v-row>
     </v-col>
+  </v-row>
+ 
   
- <div>
-    <h4>Rango de horarios:</h4>
+
+    
+
+     <v-col
+      cols="12"
+      sm="6"
+    >
+    <v-select
+      v-model="selectIntervalo"
+      :items="itemsIntervalos"
+      :error-messages="selectIntervaloErrors"
+      label="Intervalos"
+      required
+      @change="$v.selectIntervalo.$touch()"
+      @blur="$v.selectMedico.$touch()"
+    ></v-select>
+ </v-col>
+<v-row>
+    <v-col cols="12" lg="12" sm="6">
+  <h4>Rango de horarios:</h4>
     <v-card>
     <v-tabs
       v-model="tab"
       background-color="primary"
       dark
+        
     >
-      <v-tab
+      <v-tab    
         v-for="item in items"
         :key="item.tab"
       >
@@ -187,51 +163,15 @@
         :key="item.tab"
       >
         <v-card flat>
-          <v-card-text>{{ item.content }}</v-card-text>
+          <v-card-text v-for="content in item.content" :key="content.start">{{ content.start }}{{content.status}}</v-card-text>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
   </v-card>
-    <v-row
-      justify="space-around"
-      align="center"
-    >
-      <v-col style="width: 350px; flex: 0 1 auto;">
-        <h2>Inicio:</h2>
-        <v-time-picker
-          v-model="start"
-          :max="end"
-             format="24hr"
-        ></v-time-picker>
-      </v-col>
-      <v-col style="width: 350px; flex: 0 1 auto;">
-        <h2>Final:</h2>
-        <v-time-picker
-          v-model="end"
-          :min="start"
-             format="24hr"
-        ></v-time-picker>
-      </v-col>
-    </v-row>
-  </div>
-     <v-col
-      cols="12"
-      sm="6"
-    >
-
-    <v-select
-      v-model="selectIntervalo"
-      :items="itemsIntervalos"
-      :error-messages="selectIntervaloErrors"
-      label="Intervalos"
-      required
-      @change="$v.selectIntervalo.$touch()"
-      @blur="$v.selectMedico.$touch()"
-    ></v-select>
- </v-col>
-
-       
+       </v-col>
   </v-row>
+
+<v-row>
     <v-btn
       class="mr-4"
       @click="submit"
@@ -249,6 +189,7 @@
     >
       Slots
     </v-btn>
+</v-row>
   </form>
 </v-container>   
 </template>
@@ -378,12 +319,15 @@ import {db} from '../main'
                 } while (moment(this.xstart,'hh:mm').format('hh:mm')<=moment(this.end,'hh:mm').format('hh:mm'));
               // console.log(this.xdatetime);
                 this.slots.push({intervals:this.xdatetime,medico:this.selectMedico}); 
-                  this.items.push({tab:xdate,content:this.xdatetime});
+               
+                  this.items.push({tab:xdate,content:this.xdatetime,medico:this.selectMedico});
+                
                 this.xstart=this.start;
                 this.xdatetime=[];
                 
             });
                 console.log(this.slots);
+                console.log(this.items);
             },
 
     async  getMedicos(){

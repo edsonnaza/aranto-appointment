@@ -96,7 +96,39 @@
                     ></v-select>
                   </v-col>
                             
-               
+               <v-combobox
+            v-model="dates"
+            multiple
+            chips
+            small-chips
+            label="Multiple picker in menu"
+            prepend-icon="mdi-calendar"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-combobox>
+<v-date-picker
+          v-model="dates"
+          multiple
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            color="primary"
+            @click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            @click="$refs.menu.save(dates)"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
                 </v-form>
               </v-container>
             </v-card-text>
@@ -189,9 +221,11 @@ import {db} from '../main';
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       datos:[],
+       dates: ['2018-09-15', '2018-09-20'],
       xname:null,
       SelectedMedico:null,
       selectedServicio:null,
+      precio:0,
       editedIndex: -1,
       editedItem: {
         name: null,
@@ -343,7 +377,7 @@ this.getServicios();
                 
            this.eventos=[];
            events.forEach((x) => {
-                  if(x.medico===xname){  this.eventos.push({id:x.id, name:x.name,medico:x.medico,start:x.start});  }  
+                  if(x.medico.name===xname){  this.eventos.push({id:x.id, name:x.name,medico:x.medico.name,start:x.start});  }  
                   
                       
             });

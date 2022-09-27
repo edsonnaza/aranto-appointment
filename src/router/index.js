@@ -5,6 +5,8 @@ import Calendario from '@/components/Calendario.vue'
 import Home from '@/views/HomeView.vue'
 import Servicios from '@/views/Servicios.vue'
 import Agendas from '@/views/Agendas.vue'
+//import About from '@/views/AboutView.vue'
+import NewAgenda from '@/views/NewAgenda.vue'
 
 
 Vue.use(VueRouter)
@@ -36,6 +38,12 @@ const routes = [
   path: '/agendas',
   name: 'agendas',
   component: Agendas
+}
+,
+  {
+  path: '/newagenda',
+  name: 'newagenda',
+  component: NewAgenda
 }
 ]
 

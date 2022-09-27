@@ -7,13 +7,13 @@
     <v-col  cols="12"
       sm="6">
     <v-text-field
-      v-model="name"
+      v-model="name_agenda"
       :error-messages="nameErrors"
       :counter="10"
-      label="Name"
+      label="Nombre de la Agenda"
       required
-      @input="$v.name.$touch()"
-      @blur="$v.name.$touch()"
+      @input="$v.name_agenda.$touch()"
+      @blur="$v.name_agenda.$touch()"
     ></v-text-field>
  </v-col>
    </v-row>
@@ -139,6 +139,10 @@
       @blur="$v.selectMedico.$touch()"
     ></v-select>
  </v-col>
+ <v-text-field 
+    type="color" height="15" label="Color del Evento" v-model="color">
+</v-text-field>
+      
 <v-row>
     <v-col cols="12" lg="12" sm="6">
   <h4>Rango de horarios:</h4>
@@ -163,7 +167,13 @@
         :key="item.tab"
       >
         <v-card flat>
-          <v-card-text v-for="content in item.content" :key="content.start">{{ content.start }}{{content.status}}</v-card-text>
+          <v-card-text v-for="content in item.content" :key="content.start">Hora:{{ content.start }}- Status:{{content.status}}<v-btn
+          :color="color"
+          
+         
+        >
+          Color
+        </v-btn></v-card-text>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -196,7 +206,7 @@
 
 <script>
   import { validationMixin } from 'vuelidate'
-  import { required, maxLength, email } from 'vuelidate/lib/validators'
+  import { required, maxLength } from 'vuelidate/lib/validators'
 import moment from 'moment'
 
 import {db} from '../main'
@@ -204,8 +214,8 @@ import {db} from '../main'
     mixins: [validationMixin],
 
     validations: {
-      name: { required, maxLength: maxLength(10) },
-      email: { required, email },
+      name_agenda: { required, maxLength: maxLength(10) },
+     
       selectMedico: { required },
       selectIntervalo: { required },
       checkbox: {
@@ -218,8 +228,9 @@ import {db} from '../main'
     data: () => ({
         items: [],
         tab: null,
-      name: '',
-      email: '',
+ color: '#1976D2',
+      name_agenda: '',
+       
       xstart:null,
       xdate:null,
       xdatetime:[],
@@ -249,12 +260,7 @@ import {db} from '../main'
         dateRangeText () {
         return this.dates.join(' ~ ')
       },
-      checkboxErrors () {
-        const errors = []
-        if (!this.$v.checkbox.$dirty) return errors
-        !this.$v.checkbox.checked && errors.push('You must agree to continue!')
-        return errors
-      },
+      
       selectErrors () {
         const errors = []
         if (!this.$v.selectMedico.$dirty) return errors
@@ -269,18 +275,12 @@ import {db} from '../main'
       },
       nameErrors () {
         const errors = []
-        if (!this.$v.name.$dirty) return errors
-        !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long')
-        !this.$v.name.required && errors.push('Name is required.')
+       
+        !this.$v.name_agenda.maxLength && errors.push('Name must be at most 10 characters long')
+        !this.$v.name_agenda.required && errors.push('Name is required.')
         return errors
-      },
-      emailErrors () {
-        const errors = []
-        if (!this.$v.email.$dirty) return errors
-        !this.$v.email.email && errors.push('Must be valid e-mail')
-        !this.$v.email.required && errors.push('E-mail is required')
-        return errors
-      },
+      }
+   
     },
 
     methods: {
@@ -320,7 +320,7 @@ import {db} from '../main'
               // console.log(this.xdatetime);
                 this.slots.push({intervals:this.xdatetime,medico:this.selectMedico}); 
                
-                  this.items.push({tab:xdate,content:this.xdatetime,medico:this.selectMedico});
+                  this.items.push({tab:xdate,content:this.xdatetime,medico:this.selectMedico,name_agenda:this.name_agenda,color:this.color});
                 
                 this.xstart=this.start;
                 this.xdatetime=[];
@@ -361,8 +361,8 @@ import {db} from '../main'
       },
       clear () {
         this.$v.$reset()
-        this.name = ''
-        this.email = ''
+        this.name_agenda = ''
+        
         this.select = null
         this.checkbox = false
       },

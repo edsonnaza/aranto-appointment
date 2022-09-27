@@ -167,6 +167,31 @@
   
  <div>
     <h4>Rango de horarios:</h4>
+    <v-card>
+    <v-tabs
+      v-model="tab"
+      background-color="primary"
+      dark
+    >
+      <v-tab
+        v-for="item in items"
+        :key="item.tab"
+      >
+        {{ item.tab }}
+      </v-tab>
+    </v-tabs>
+
+    <v-tabs-items v-model="tab">
+      <v-tab-item
+        v-for="item in items"
+        :key="item.tab"
+      >
+        <v-card flat>
+          <v-card-text>{{ item.content }}</v-card-text>
+        </v-card>
+      </v-tab-item>
+    </v-tabs-items>
+  </v-card>
     <v-row
       justify="space-around"
       align="center"
@@ -250,15 +275,8 @@ import {db} from '../main'
     },
 
     data: () => ({
-             currentItem: 'tab-Web',
-      items: [
-        'Web', 'Shopping', 'Videos', 'Images',
-      ],
-      more: [
-        'News', 'Maps', 'Books', 'Flights', 'Apps',
-      ],
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    
+        items: [],
+        tab: null,
       name: '',
       email: '',
       xstart:null,
@@ -325,6 +343,8 @@ import {db} from '../main'
     },
 
     methods: {
+
+   
     dateFormat(xdate){
             return moment(xdate).format('DD-MM-YYYY');
         },
@@ -352,11 +372,13 @@ import {db} from '../main'
                     this.xstart=moment(this.xstart,'hh:mm').add(this.selectIntervalo,'m').format('hh:mm');
                         
                     this.xdatetime.push({xdate,start:this.xstart, status:'D'});
-                      
+                    
+                    
                      //console.log(this.xdatetime);
                 } while (moment(this.xstart,'hh:mm').format('hh:mm')<=moment(this.end,'hh:mm').format('hh:mm'));
-               console.log(this.xdatetime);
+              // console.log(this.xdatetime);
                 this.slots.push({intervals:this.xdatetime,medico:this.selectMedico}); 
+                  this.items.push({tab:xdate,content:this.xdatetime});
                 this.xstart=this.start;
                 this.xdatetime=[];
                 

@@ -284,7 +284,40 @@ import {db} from '../main'
     },
 
     methods: {
-
+ async addEvent(){
+        try {
+            if(this.name && this.start &&  this.end){
+                await db.collection('eventos').add({
+                    name: this.name,
+                    details: this.details,
+                    start: this.start,
+                    end:this.end,
+                    starttime: this.starttime,
+                    endtime:this.endtime,
+                    color: this.color,
+                    //idmedico:this.selectedMedico.id,
+                    idgenda:this.idagenda,
+                    medico: this.selectedMedico,
+                    servicio: this.selectedServicio,
+                   // precio:this.precio
+                    
+                })
+                    this.getEvents();
+                    this.name=null;
+                    this.details=null;
+                    this.start=null;
+                    this.end=null;
+                    this.color='#1976D2';
+                    this.selectedMedico=null;
+                    this.selectedServicio=null;
+                    this.precio=0;
+             }else{
+                console.log('Campos obligatorios');
+            }
+        } catch (error) {
+             console.log(error)
+        }    
+    },
    
     dateFormat(xdate){
             return moment(xdate).format('DD-MM-YYYY');
@@ -307,7 +340,7 @@ import {db} from '../main'
              this.dates.forEach((xdate) => {
               //  console.log(xdate);
              this.xdatetime.push({xdate,start:this.xstart, status:'D'});
-               //Recorre el cada fecha y add el rango de slots/spacios habilitado 
+               //Recorre  cada fecha y add el rango de slots/spacios habilitado 
                  do {
                    
                     this.xstart=moment(this.xstart,'hh:mm').add(this.selectIntervalo,'m').format('hh:mm');

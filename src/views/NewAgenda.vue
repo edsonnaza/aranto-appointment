@@ -257,9 +257,7 @@ import {db} from '../main'
     },
     computed: {
         
-        dateRangeText () {
-        return this.dates.join(' ~ ')
-      },
+       
       
       selectErrors () {
         const errors = []

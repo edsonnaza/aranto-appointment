@@ -120,12 +120,7 @@
     </v-row>
     </v-col>
   </v-row>
- 
-  
-
-    
-
-     <v-col
+  <v-col
       cols="12"
       sm="6"
     >
@@ -153,7 +148,7 @@
       dark
         
     >
-      <v-tab    
+      <v-tab  v-model="tab"
         v-for="item in items"
         :key="item.tab"
       >
@@ -168,8 +163,7 @@
       >
         <v-card flat>
           <v-card-text v-for="content in item.content" :key="content.start">Hora:{{ content.start }}- Status:{{content.status}}<v-btn
-          :color="color"
-          
+          :color="color" 
          
         >
           Color
@@ -257,8 +251,7 @@ import {db} from '../main'
     },
     computed: {
         
-       
-      
+            
       selectErrors () {
         const errors = []
         if (!this.$v.selectMedico.$dirty) return errors
